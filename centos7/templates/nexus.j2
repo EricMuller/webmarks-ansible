@@ -1,0 +1,14 @@
+
+<h1>Welcome to {{ scheme }} {{nexus_server}}</h1>
+<p>Site pushed with ansible</p>
+
+{% if scheme == "http" %}
+<p><a href="{{ scheme }}://{{keycloak_server}}">Keycloak {{ group_name }}</a></p>
+<p><a href="{{ scheme }}://{{nexus_server}}:{{nexus_port}}/nexus">Nexus {{ group_name }}</a></p>
+<p><a href="{{ scheme }}://{{qcm_server}}">QCM {{ group_name }}</a></p>
+{% else  %}
+<p><a href="{{ scheme }}://{{keycloak_server}}">Keycloak {{ group_name }}</a></p>
+<p><a href="{{ scheme }}://{{nexus_server}}/nexus">Nexus {{ group_name }}</a></p>
+<p><a href="{{ scheme }}://{{qcm_server}}">QCM {{ group_name }}</a></p>
+{% endif  %}
+

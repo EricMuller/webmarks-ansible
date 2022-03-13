@@ -1,0 +1,21 @@
+---
+- name: My playbook
+  hosts: default
+  tasks:
+    - name: Suppression du user webmarks
+      user:
+        name: webmarks
+        state: absent
+      register: mavar
+    - name: debug
+      debug:
+        msg: "{{ mavar }}"
+    - name: Suppression du user test
+      user:
+        name: test
+        state: absent
+      register: mavar
+    - name: debug
+      debug:
+        msg: "{{ mavar }}"
+

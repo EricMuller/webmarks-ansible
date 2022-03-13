@@ -1,0 +1,8 @@
+---
+
+docker_db: sonarqube
+docker_db_user: postgres
+docker_db_password: postgres
+
+venv_home: "/devops/python"
+docker_venv: "docker_venv"

@@ -1,0 +1,10 @@
+---
+
+devops_dir: "/devops"
+devops_certs_dir: "{{ devops_dir }}/certs"
+devops_certs_public_dir: "{{ devops_certs_dir }}/public"
+devops_apps_dir: "{{ devops_dir }}/apps"
+
+
+
+

@@ -1,0 +1,107 @@
+---
+- name: Initialise qcm app with default  index site
+  hosts: 'all'
+  become: yes
+
+  vars_files:
+    - devops.yaml
+    - qcm.yaml
+    - nexus.yaml
+
+  vars:
+      scheme: "https"
+      latest_dist_dir: "/qcm/dist/latest"
+
+  pre_tasks:
+
+    - name: checking limit arg
+      fail:
+          msg: "you must use -l or --limit - when you really want to use all hosts, use -l 'all'"
+      when: ansible_limit is not defined
+      run_once: true
+
+    - name: "Create qcm directory devops"
+      file:
+        path: "{{ item.dest }}"
+        #mode: "{{item.mode}}"
+        state: directory
+        owner: apache
+        group: apache
+      with_items:
+        - { dest: '{{ devops_apps_qcm_dir }}', mode: '0707'}
+        - { dest: '{{ devops_apps_qcm_html_dir }}', mode: '0707'}
+        - { dest: '{{ devops_apps_qcm_backend_dir }}', mode: '0707'}
+        - { dest: '{{ devops_apps_qcm_html_v1_dir }}', mode: '0707'}
+        - { dest: '{{ devops_apps_qcm_backend_v1_dir }}', mode: '0707'}
+
+  tasks:
+
+    - name: Copying the index file
+      template:
+        src="/root/playbook/centos7/templates/{{item}}.j2"
+        dest="{{ devops_apps_qcm_html_dir }}/index.html"
+        owner=apache
+        group=apache
+        mode=0644
+      with_items:
+        - qcm
+
+    - name: "Delete {{ latest_dist_dir }}"
+      file:
+        state: absent
+        path: "{{ latest_dist_dir }}"
+
+    - name: "Copying {{ latest_dist_dir }}"
+      copy:
+        src="{{ latest_dist_dir }}"
+        dest="{{ devops_apps_qcm_html_dir }}"
+        owner=apache
+        group=apache
+        mode=0644
+
+    - name: "Copying the conf.d conf file"
+      template:
+        src="/root/playbook/centos7/templates/{{item}}.j2"
+        dest=/etc/httpd/conf.d/{{item}} owner=apache group=apache
+        mode=0644
+      with_items:
+        - qcm.webmarks.net-le-ssl.conf
+
+    - name: ensure httpd is running
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: ensure firewall is running
+      service:
+        name: firewalld
+        state: started
+        enabled: true
+
+    - name: Open port 80 for http access
+      firewalld:
+        service: http
+        permanent: true
+        state: enabled
+
+    - name: Open port 443 for https access
+      firewalld:
+        service: https
+        permanent: true
+        state: enabled
+
+    - name: Restart the firewalld /httpd service
+      service:
+        name: "{{item}}"
+        state: restarted
+      with_items:
+        - httpd
+        - firewalld
+
+    - name: Set httpd_can_network_connect flag on and keep it persistent across reboots
+      ansible.posix.seboolean:
+        name: httpd_can_network_connect
+        state: yes
+        persistent: yes
+      ignore_errors: yes

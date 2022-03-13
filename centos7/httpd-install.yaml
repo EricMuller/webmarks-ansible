@@ -1,0 +1,74 @@
+---
+- name: "This sets up an HTTPD Server"
+  hosts: 'all'
+
+  vars_files:
+    - certs.yaml
+    - keycloak.yaml
+    - nexus.yaml
+
+  vars:
+      scheme: "http"
+
+  pre_tasks:
+
+    - name: checking limit arg
+      fail:
+          msg: "you must use -l or --limit - when you really want to use all hosts, use -l 'all'"
+      when: ansible_limit is not defined
+      run_once: true
+
+    - name: "Install yum {{group_name}}  package"
+      yum:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - httpd
+
+    - name: "Delete /etc/httpd/conf.d/{{item}}"
+      file:
+        state: absent
+        path: "/etc/httpd/conf.d/{{item}}"
+      with_items:
+        - centos7.webmarks.net-le-ssl.conf
+        - qcm.webmarks.net-le-ssl.conf
+
+  tasks:
+
+    - name: Copying the index file
+      template:
+        src="/root/playbook/centos7/templates/{{item}}.j2"
+        dest=/var/www/html/{{item}}.html
+        owner=apache
+        group=apache
+        mode=0644
+      with_items:
+        - index
+        - nexus
+        - qcm
+
+
+    - name: "Copying the conf.d conf file"
+      template:
+          src="/root/playbook/centos7/templates/{{item}}.j2"
+          dest=/etc/httpd/conf.d/{{item}} owner=apache group=apache
+          mode=0644
+      with_items:
+        - centos7.webmarks.net.conf
+
+    - name: Restart httpd
+      service:
+        name: "{{item}}"
+        state: restarted
+      with_items:
+        - httpd
+
+    - name: ensure httpd is running
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+
+
+

@@ -1,0 +1,90 @@
+
+<IfModule mod_ssl.c>
+
+  <VirtualHost *:443>
+    ServerName {{centos7_server}}
+    ServerAdmin admin@webmarks.net
+    DocumentRoot "/var/www/html"
+    DirectoryIndex index.ssl.html
+    ErrorLog "/var/log/httpd/https.{{centos7_server}}.error_log"
+    CustomLog "/var/log/httpd/https.{{centos7_server}}.access_log" common
+
+    RequestHeader set X-Forwarded-Proto https
+    RequestHeader set X-Forwarded-Port 443
+    # RequestHeader set X-Forwarded-For https
+
+
+    ProxyRequests Off
+    ProxyPreserveHost On
+
+    ProxyPass /nexus http://{{centos7_server}}:8081/nexus
+    ProxyPassReverse /nexus http://{{centos7_server}}:8081/nexus
+
+    SSLCertificateFile /etc/letsencrypt/live/{{centos7_server}}/cert.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/{{centos7_server}}/privkey.pem
+    Include /etc/letsencrypt/options-ssl-apache.conf
+    SSLCertificateChainFile /etc/letsencrypt/live/{{centos7_server}}/chain.pem
+
+  </VirtualHost>
+
+ <VirtualHost *:443>
+      ServerName {{nexus_server}}
+      ServerAdmin admin@webmarks.net
+      DocumentRoot "/var/www/html"
+      DirectoryIndex nexus.ssl.html
+      ErrorLog "/var/log/httpd/https.{{nexus_server}}.error_log"
+      CustomLog "/var/log/httpd/https.{{nexus_server}}.access_log" common
+
+      <Proxy  http://{{host_ip}}:8081>
+        Order allow,deny
+        Allow from all
+        SSLRequireSSL
+      </Proxy>
+
+      RequestHeader set X-Forwarded-Proto "https"
+      RequestHeader set X-Forwarded-Port "443"
+      # RequestHeader set X-Forwarded-For "https"
+
+      ProxyRequests Off
+      ProxyPreserveHost On
+      SSLEngine on
+      # SSLProxyEngine Off
+
+      ProxyPass /nexus http://{{host_ip}}:8081/nexus
+      ProxyPassReverse /nexus http://{{host_ip}}:8081/nexus
+
+      SSLCertificateFile /etc/letsencrypt/live/{{centos7_server}}/cert.pem
+      SSLCertificateKeyFile /etc/letsencrypt/live/{{centos7_server}}/privkey.pem
+      Include /etc/letsencrypt/options-ssl-apache.conf
+      SSLCertificateChainFile /etc/letsencrypt/live/{{centos7_server}}/chain.pem
+
+  </VirtualHost>
+
+  <VirtualHost *:443>
+      ServerName {{keycloak_server}}
+      ServerAdmin admin@webmarks.net
+      DocumentRoot "/var/www/html"
+      DirectoryIndex index.html
+      ErrorLog "/var/log/httpd/https.{{keycloak_server}}.error_log"
+      CustomLog "/var/log/httpd/https.{{keycloak_server}}.access_log" common
+
+      ProxyRequests Off
+      ProxyPreserveHost On
+      SSLEngine on
+      SSLProxyEngine on
+      ProxyPass / https://{{keycloak_server}}:8443/ retry=1 acquire=3000 timeout=600 Keepalive=On
+      ProxyPassReverse / https://{{keycloak_server}}:8443/
+      RequestHeader set X-Forwarded-Proto "https"
+      RequestHeader set X-Forwarded-Port "443"
+      # RequestHeader set X-Forwarded-For "https"
+
+      SSLCertificateFile /etc/letsencrypt/live/{{centos7_server}}/cert.pem
+      SSLCertificateKeyFile /etc/letsencrypt/live/{{centos7_server}}/privkey.pem
+      Include /etc/letsencrypt/options-ssl-apache.conf
+      SSLCertificateChainFile /etc/letsencrypt/live/{{centos7_server}}/chain.pem
+
+  </VirtualHost>
+
+
+</IfModule>
+

@@ -1,0 +1,10 @@
+---
+devops_apps_qcm_dir: "{{ devops_apps_dir }}/qcm"
+devops_apps_qcm_html_dir: "{{ devops_apps_qcm_dir }}/html"
+devops_apps_qcm_backend_dir: "{{ devops_apps_qcm_dir }}/backend"
+
+devops_apps_qcm_html_v1_dir: "{{ devops_apps_qcm_html_dir }}/v1"
+devops_apps_qcm_backend_v1_dir: "{{ devops_apps_qcm_backend_dir }}/v1"
+
+
+

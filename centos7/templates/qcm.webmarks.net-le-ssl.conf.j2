@@ -1,0 +1,38 @@
+
+<IfModule mod_ssl.c>
+
+ <VirtualHost *:443>
+      ServerName {{qcm_server}}
+      ServerAdmin admin@webmarks.net
+      DocumentRoot "{{ devops_apps_qcm_html_dir }}"
+      DirectoryIndex index.html
+      ErrorLog "/var/log/httpd/https.{{qcm_server}}.error_log"
+      CustomLog "/var/log/httpd/https.{{qcm_server}}.access_log" common
+
+      <Directory {{ devops_apps_qcm_html_dir }} >
+           Options FollowSymLinks Indexes
+           AllowOverride all
+           Require all granted
+      </Directory>
+
+      ProxyRequests Off
+      ProxyPreserveHost On
+      SSLEngine on
+
+      ProxyPass /api https://{{qcm_server}}:8001/ retry=1 acquire=3000 timeout=600 Keepalive=On
+      ProxyPassReverse /api  https://{{qcm_server}}:8001/
+
+
+      RequestHeader set X-Forwarded-Proto "https"
+      RequestHeader set X-Forwarded-Port "443"
+      # RequestHeader set X-Forwarded-For "https"
+
+      SSLCertificateFile /etc/letsencrypt/live/{{centos7_server}}/cert.pem
+      SSLCertificateKeyFile /etc/letsencrypt/live/{{centos7_server}}/privkey.pem
+      Include /etc/letsencrypt/options-ssl-apache.conf
+      SSLCertificateChainFile /etc/letsencrypt/live/{{centos7_server}}/chain.pem
+
+  </VirtualHost>
+
+</IfModule>
+

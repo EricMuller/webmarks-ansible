@@ -1,0 +1,23 @@
+---
+
+keycloak_version: 17.0.0
+keycloak_dir: /opt/keycloak
+keycloak_archive: keycloak-{{ keycloak_version }}.tar.gz
+keycloak_url: "https://github.com/keycloak/keycloak/releases/download{{ keycloak_version }}/{{keycloak_archive }}"
+keycloak_jboss_home: "{{ keycloak_dir }}/keycloak-{{ keycloak_version }}"
+keycloak_log_dir: "{{ keycloak_jboss_home }}/standalone/log"
+
+keyloack_port: 8443
+
+docker_network_name: keycloak-{{keycloak_version}}-network
+docker_container_app_name: keycloak-{{keycloak_version}}-srv
+docker_container_db_name: keycloak-{{keycloak_version}}-db-srv
+docker_volume_db_data: keycloak-{{keycloak_version}}-db-data
+
+
+keycloak_admin: admin
+keycloak_admin_password:
+
+docker_db: keycloak
+docker_db_user: postgres
+docker_db_password: postgres

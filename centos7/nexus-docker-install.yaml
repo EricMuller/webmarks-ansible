@@ -1,0 +1,49 @@
+---
+- name: Install nexus under postgres
+  hosts: 'all'
+  become: yes
+
+  vars_files:
+    - certs.yaml
+    - nexus.yaml
+
+  tasks:
+
+    - name: "Create nexus network"
+      docker_network:
+        name: "{{ docker_network_name }}"
+        driver: bridge
+
+    - name: "Create and Run DB container"
+      docker_container:
+        hostname: "{{ docker_container_db_name }}"
+        name: "{{ docker_container_db_name }}"
+        image: postgres:14.2
+        state: started
+        restart: yes
+        volumes:
+          - "nexus-db-data:/var/lib/postgresql/data"
+        restart_policy: unless-stopped
+        networks:
+          - name: "{{ docker_network_name }}"
+        env:
+          POSTGRES_DB: "{{ docker_db }}"
+          POSTGRES_USER: "{{ docker_db_user }}"
+          POSTGRES_PASSWORD: "{{ docker_db_password }}"
+
+    - name: "Create and Run nexus3 container"
+      docker_container:
+        hostname: "{{docker_container_app_name}}"
+        name: "{{docker_container_app_name}}"
+        image: sonatype/nexus3
+        state: started
+        restart: yes
+        volumes:
+          - "{{docker_volume_db_data}}:/nexus-data"
+        ports:
+          - "8081:8081"
+        restart_policy: unless-stopped
+        networks:
+          - name: "{{ docker_network_name }}"
+        env:
+          NEXUS_CONTEXT: nexus

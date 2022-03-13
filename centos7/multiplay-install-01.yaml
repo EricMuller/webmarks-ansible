@@ -1,0 +1,11 @@
+---
+- import_playbook: devops-init.yaml
+- import_playbook: lib-yum-install.yaml
+- import_playbook: lib-yum-cerbot-install.yaml
+#- import_playbook: pip-lib-install.yaml
+- import_playbook: httpd-install.yaml
+- import_playbook: docker-ce-install.yaml
+- import_playbook: jdk-11-install.yaml
+- import_playbook: httpd-firewalld.yaml
+
+

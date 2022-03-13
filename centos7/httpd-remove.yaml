@@ -1,0 +1,8 @@
+---
+- name: This sets up an httpd webserver
+  hosts: default
+  tasks:
+    - name: remove apache packages
+      yum:
+        name: httpd
+        state: absent

@@ -1,0 +1,11 @@
+---
+
+certs_private_path: "{{devops_certs_dir}}/private"
+private_key_path: "{{certs_private_path}}/certificate.key"
+private_csr_path: "{{certs_private_path}}/certificate.csr"
+private_pem_path: "{{certs_private_path}}/certificate.pem"
+private_keystore: "{{certs_private_path}}/local.keystore"
+private_keystore_password: "secret"
+
+public_keystore: "{{devops_certs_public_dir}}/public.keystore"
+public_keystore_password: "secret"

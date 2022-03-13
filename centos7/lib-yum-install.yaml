@@ -1,0 +1,20 @@
+---
+- name: "Install Yum OS lib"
+  gather_facts: No
+  hosts: 'all'
+
+  tasks:
+    - name: "Install {{group_name}}  packages"
+      yum:
+        name: "{{item}}"
+        state: present
+
+      with_items:
+        - httpd
+        - firewalld
+        - python-firewall
+        - python-virtualenv
+        - python-docker
+
+
+

@@ -1,0 +1,29 @@
+
+<h1>Welcome to {{ scheme }}  {{qcm_server}}</h1>
+<p>Site pushed with ansible</p>
+
+{% if scheme == "http" %}
+<p><a href="{{ scheme }}://{{keycloak_server}}">Keycloak {{ group_name }}</a></p>
+<p><a href="{{ scheme }}://{{nexus_server}}:{{nexus_port}}/nexus">Nexus {{ group_name }}</a></p>
+<p><a href="{{ scheme }}://{{qcm_server}}">QCM {{ group_name }}</a></p>
+
+<b>QCM {{ group_name }}</b>
+<ul>
+    <li>Version latest</li>
+    <p><a href="{{ scheme }}://{{qcm_server}}/latest">Front Angular </a></p>
+    <p><a href="{{ scheme }}://{{qcm_server}}/v1/api">Open Api</a></p>
+</ul>
+
+{% else  %}
+
+<b>SSO</b>
+<p><a href="{{ scheme }}://{{keycloak_server}}">Keycloak {{ group_name }}</a></p>
+<b>Tools</b>
+<p><a href="{{ scheme }}://{{nexus_server}}/nexus">Nexus {{ group_name }}</a></p>
+<b>QCM {{ group_name }}</b>
+<ul>
+    <li>Version latest</li>
+    <p><a href="{{ scheme }}://{{qcm_server}}/latest">Front Angular </a></p>
+    <p><a href="{{ scheme }}://{{qcm_server}}/v1/api">Open Api</a></p>
+</ul>
+{% endif  %}

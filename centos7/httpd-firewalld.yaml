@@ -1,0 +1,63 @@
+---
+- name: "This sets up firewalld Server"
+  hosts: 'all'
+
+  pre_tasks:
+
+    - name: checking limit arg
+      fail:
+          msg: "you must use -l or --limit - when you really want to use all hosts, use -l 'all'"
+      when: ansible_limit is not defined
+      run_once: true
+
+    - name: "Install {{group_name}} apache packages"
+      yum:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - firewalld
+
+  tasks:
+
+    - name: ensure firewall is running
+      service:
+        name: firewalld
+        state: started
+        enabled: true
+
+    - name: "Override Python Interpeter for CentOS7"
+      set_fact:
+        my_interpreter: "/usr/bin/python2"
+
+    - name: Open port 80 for http access
+      ansible.posix.firewalld:
+        service: http
+        permanent: true
+        state: enabled
+      become: true
+      #vars:
+      #   ansible_python_interpreter: /usr/bin/python2
+
+    - name: Open port 443 for http access
+      ansible.posix.firewalld:
+        service: https
+        permanent: true
+        state: enabled
+      become: true
+          #vars:
+          #   ansible_python_interpreter: /usr/bin/python2
+
+    - name:  do not permit traffic in default zone on port 8081/tcp
+      ansible.posix.firewalld:
+        zone: public
+        port: 8081/tcp
+        permanent: yes
+        state: disabled
+
+    - name: Restart the firewalld /httpd service
+      service:
+        name: "{{item}}"
+        state: restarted
+      with_items:
+        - firewalld
+

@@ -1,0 +1,14 @@
+---
+
+nexus_version: 3.38.0-01
+
+nexus_port: 8081
+
+docker_network_name: nexus-{{ nexus_version }}-network
+docker_container_db_name: nexus-{{ nexus_version }}-db-srv
+docker_container_app_name: nexus-{{ nexus_version }}-srv
+docker_volume_db_data: nexus-{{ nexus_version }}-db-data
+
+docker_db: nexus
+docker_db_user: postgres
+docker_db_password: postgres

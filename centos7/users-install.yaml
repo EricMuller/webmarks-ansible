@@ -1,0 +1,32 @@
+---
+- name: My playbook
+  hosts: default
+  tasks:
+    - name: création du user webmarks
+      user:
+        name: webmarks
+        state: present
+        generate_ssh_key: yes
+        uid: 1200
+        # groups: sudo
+        # append: yes
+        password: "{{ 'webmarks' | password_hash('sha512') }}"
+      register: mavar
+    - name: debug
+      debug:
+        msg: "{{ mavar }}"
+    - name: création du user webmarks
+      user:
+        name: test
+        state: present
+        generate_ssh_key: yes
+        uid: 1201
+        # groups: sudo
+        # append: yes
+        password: "{{ 'test' | password_hash('sha512') }}"
+      register: mavar
+    - name: debug
+      debug:
+        msg: "{{ mavar }}"
+
+

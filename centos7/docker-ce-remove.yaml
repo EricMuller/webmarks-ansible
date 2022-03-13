@@ -1,0 +1,8 @@
+---
+- name: This remove  docker ce
+  hosts: default
+  tasks:
+    - name: remove docker-ce packages
+      yum:
+        name: docker-ce
+        state: absent

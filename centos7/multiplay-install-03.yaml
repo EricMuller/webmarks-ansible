@@ -1,0 +1,8 @@
+---
+
+- import_playbook: keycloak-docker-clean.yaml
+- import_playbook: keycloak-docker-install.yaml
+- import_playbook: nexus-docker-clean.yaml
+- import_playbook: nexus-docker-install.yaml
+
+

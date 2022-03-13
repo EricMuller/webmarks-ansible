@@ -1,0 +1,43 @@
+---
+- name: My playbook OPENJDK 11
+  hosts: 'all'
+  tasks:
+    - name: Install OpenJava using Ansible
+      yum:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - java-11-openjdk-devel
+      register: mavar
+
+    - name: debug
+      debug:
+        msg: "{{ mavar }}"
+
+    - name: update alternatives for java
+      community.general.alternatives:
+        name: java
+        path: /usr/lib/jvm/java-11-openjdk/bin/java
+        link: /usr/bin/java
+        priority: 20000
+
+    - name: update alternatives for keytool
+      community.general.alternatives:
+        name: keytool
+        path: /usr/lib/jvm/java-11-openjdk/bin/keytool
+        link: /usr/bin/keytool
+        priority: 20000
+
+    - name: set java home as environment variable
+      blockinfile:
+        insertafter: EOF
+        path: /etc/environment
+        block: export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+      register: mavar2
+
+    - name: debug
+      debug:
+        msg: "{{ mavar2 }}"
+
+

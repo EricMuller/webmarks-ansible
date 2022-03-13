@@ -1,0 +1,88 @@
+---
+- name: This sets up context ssl httpd webserver
+  hosts: 'all'
+
+  vars:
+    scheme: "https"
+
+  pre_tasks:
+
+    - name: checking limit arg
+      fail:
+          msg: "you must use -l or --limit - when you really want to use all hosts, use -l 'all'"
+      when: ansible_limit is not defined
+      run_once: true
+
+    - name: "Install {{group_name}} apache packages"
+      yum:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - httpd
+        - firewalld
+
+  tasks:
+
+    - name: "Copying the ssl index file"
+      template:
+        src="/root/playbook/centos7/templates/{{item}}.j2"
+        dest=/var/www/html/{{item}}.ssl.html
+        owner=apache
+        group=apache
+        mode=0644
+      with_items:
+        - index
+        - nexus
+
+    - name: "Copying the conf.d conf file"
+      template:
+          src="/root/playbook/centos7/templates/{{item}}.j2"
+          dest=/etc/httpd/conf.d/{{item}} owner=apache group=apache
+          mode=0644
+      with_items:
+        - centos7.webmarks.net-le-ssl.conf
+
+    - name: Disable SELinux
+      ansible.posix.selinux:
+        state: disabled
+
+    - name: ensure httpd is running
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: ensure firewall is running
+      service:
+        name: firewalld
+        state: started
+        enabled: true
+
+    - name: Open port 80 for http access
+      firewalld:
+        service: http
+        permanent: true
+        state: enabled
+
+    - name: Open port 443 for https access
+      firewalld:
+        service: https
+        permanent: true
+        state: enabled
+
+    - name: Restart the firewalld /httpd service
+      service:
+        name: "{{item}}"
+        state: restarted
+      with_items:
+        - httpd
+        - firewalld
+
+    - name: Set httpd_can_network_connect flag on and keep it persistent across reboots
+      ansible.posix.seboolean:
+        name: httpd_can_network_connect
+        state: yes
+        persistent: yes
+      ignore_errors: yes
+
+

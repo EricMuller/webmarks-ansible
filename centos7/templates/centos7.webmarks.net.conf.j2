@@ -1,0 +1,35 @@
+
+
+<VirtualHost *:80>
+  ServerName {{ centos7_server }}
+  ServerAdmin admin@webmarks.net
+  DocumentRoot "/var/www/html"
+  DirectoryIndex index.html
+
+  ErrorLog "/var/log/httpd/{{centos7_server}}.error_log"
+  CustomLog "/var/log/httpd/{{centos7_server}}.access_log" common
+
+  Header unset ETag
+  Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires "Wed, 12 Jan 1980 05:00:00 GMT"
+
+</VirtualHost>
+
+<VirtualHost *:80>
+  ServerName {{ qcm_server }}
+  ServerAdmin admin@webmarks.net
+  DocumentRoot "/var/www/html"
+  DirectoryIndex qcm.html
+
+  ErrorLog "/var/log/httpd/{{qcm_server}}.error_log"
+  CustomLog "/var/log/httpd/{{qcm_server}}.access_log" common
+
+  Header unset ETag
+  Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires "Wed, 12 Jan 1980 05:00:00 GMT"
+
+</VirtualHost>
+
+

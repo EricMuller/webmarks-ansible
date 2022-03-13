@@ -1,0 +1,25 @@
+---
+- name: Install PYTHON LIBRAIRIES
+  gather_facts: No
+  hosts: 'all'
+
+  tasks:
+    - name: "Install  Python library cryptography"
+      pip:
+        name: "{{item}}"
+        state: forcereinstall
+        extra_args: --user
+      with_items:
+        #- docker==4.4.4
+        #- virtualenv
+        #- docker
+        #- cryptography
+        #- websocket
+        #- charset-normalizer
+        #- cffi
+
+#    - name: "Install Python firewall library cryptography"
+#      pip:
+#        name: python3-firewall
+
+

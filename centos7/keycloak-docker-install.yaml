@@ -1,0 +1,64 @@
+---
+- name: "Install Keycloak docker"
+  hosts: 'all'
+  become: yes
+
+  vars_files:
+    - devops.yaml
+    - certs.yaml
+    - keycloak.yaml
+
+  tasks:
+
+    - name: "checking limit arg"
+      fail:
+          msg: "you must use -l or --limit - when you really want to use all hosts, use -l 'all'"
+      when: ansible_limit is not defined
+      run_once: true
+
+    - name: "Create keycloak network"
+      docker_network:
+        name: "{{ docker_network_name }}"
+        driver: bridge
+
+    - name:  "Create and  Run DB container"
+      docker_container:
+        hostname: "{{docker_container_db_name}}"
+        name: "{{docker_container_db_name}}"
+        image: postgres:14.2
+        state: started
+        restart: yes
+        volumes:
+         - "{{ docker_volume_db_data }}:/var/lib/postgresql/data"
+        restart_policy: unless-stopped
+        networks:
+          - name: "{{ docker_network_name }}"
+        env:
+          POSTGRES_DB: "{{ docker_db }}"
+          POSTGRES_USER: "{{ docker_db_user }}"
+          POSTGRES_PASSWORD: "{{ docker_db_password }}"
+
+    - name:  "Create and  Run Keycloak container"
+      docker_container:
+        hostname: "{{ docker_container_app_name }}"
+        name: "{{ docker_container_app_name }}"
+        image: quay.io/keycloak/keycloak:17.0.0
+        command: "start --auto-build --db=postgres --features=token-exchange --hostname-strict=false --db-url=jdbc:postgresql://{{ docker_container_db_name }}:5432/{{ docker_db }} --db-username={{ docker_db_user }} --db-password={{ docker_db_password }} --https-key-store-file=/etc/certs/keystore --https-key-store-password={{ public_keystore_password }} -Dkeycloak.profile.feature.scripts=enabled -Dkeycloak.profile.feature.upload_scripts=enabled"
+        state: started
+        restart: yes
+        ports:
+          - "{{ keyloack_port }}:{{ keyloack_port }}"
+        volumes:
+          - "{{ public_keystore }}:/etc/certs/keystore"
+        env:
+          KEYCLOAK_ADMIN: "{{ keycloak_admin }}"
+          KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
+          PROXY_ADDRESS_FORWARDING: "true"
+          POSTGRES_PASSWORD: "{{ docker_db_password }}"
+          KEYCLOAK_FRONTEND_URL: "https://{{keycloak_server}}/"
+          REDIRECT_SOCKET: "proxy-https"
+
+        restart_policy: unless-stopped
+        networks:
+          - name: "{{ docker_network_name }}"
+
