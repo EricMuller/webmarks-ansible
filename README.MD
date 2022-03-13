@@ -42,7 +42,10 @@ ssh root@94.23.251.82
 
 # Setup Remote Host 
 
+
 Install pip
+
+**Warn :  must be done without playbook**
 
 > curl "https://bootstrap.pypa.io/pip/2.7/get-pip.py" -o "get-pip.py"
 >  python2.7 get-pip.py
@@ -88,17 +91,17 @@ source env/bin/activate
 
 > ansible-playbook mytask.yaml -l dev 
 
-# docker password
+#### docker password
 
 docker exec -it nexus-srv bash
 cat /nexus-data/admin.password
 
-#lets encript
+#### lets encript
 
 yum install epel-release
 yum install certbot python2-certbot-apache mod_ssl
 
-# cerbot dev
+#### cerbot dev
 
 certbot certificates
 
@@ -106,20 +109,20 @@ sudo certbot delete --cert-name $mydomain
 
 certbot --apache -d centos7-dev.webmarks.net -d keycloak-dev.webmarks.net -d nexus-dev.webmarks.net -d jenkins-dev.webmarks.net -d sonarqube-dev.webmarks.net -d qcm-dev.webmarks.net
 
-# cerbot  prod
+#### cerbot  prod
 
 certbot certificates
 certbot renew --dry-run
 crontab -e
 * */12 * * * root /usr/bin/certbot renew >/dev/null 2>&1
 
-# tools
+#### tools
 
 sudo ngrep -W byline "GET|POST HTTP" -d eth0 port 8081
 
 docker volume ls -qf dangling=true | xargs -r docker volume rm
 
-## openssl
+#### openssl
 
 view detail certificate:
 openssl x509 -text -in VotreCertificat.crt -noout
@@ -131,8 +134,6 @@ openssl x509 -noout -modulus -in server.crt | md5sum
 
 Si le résultat est le même pour les deux commandes, alors la clé privée et le certificat
 sont bien pour le même nom de domaine, avec les mêmes caractéristiques (validité…)
-
-
 
 
 
