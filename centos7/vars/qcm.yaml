@@ -8,3 +8,17 @@ devops_apps_qcm_backend_v1_dir: "{{ devops_apps_qcm_backend_dir }}/v1"
 
 
 
+qcm_version: latest
+
+qcm_port: 8000
+
+docker_network_name: qcm-network
+docker_container_db_name: qcm-db-srv
+docker_container_app_name: qcm-app-srv
+docker_container_app_img: ericmuller/qcm-rest-app:latest
+docker_volume_db_data: qcm-db-data
+
+docker_db: qcm
+docker_db_port: 5432
+docker_db_user: postgres
+docker_db_password: postgres

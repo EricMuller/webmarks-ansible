@@ -1,0 +1,44 @@
+---
+- name: Clean Docker Keycloak
+  hosts: 'all'
+  become: yes
+
+  vars_files:
+    - devops.yaml
+    - certs.yaml
+    - qcm.yaml
+
+  tasks:
+
+    - name: checking limit arg
+      fail:
+          msg: "you must use -l or --limit - when you really want to use all hosts, use -l 'all'"
+      when: ansible_limit is not defined
+      run_once: true
+
+    - name: "Stop running keycloak containers"
+      docker_container:
+        name: "{{ item }}"
+        state: stopped
+      ignore_errors: yes
+      with_items:
+        - "{{ docker_container_db_name }}"
+        - "{{ docker_container_app_name }}"
+
+    - name: "Remove keycloak containers"
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ docker_container_db_name }}"
+        - "{{ docker_container_app_name }}"
+
+    - name: "Remove keycloak network"
+      docker_network:
+        name: "{{ docker_network_name }}"
+        state: absent
+
+    - name: "Remove keycloak volume"
+      docker_volume:
+        name: "{{ docker_volume_db_data }}"
+        state: absent

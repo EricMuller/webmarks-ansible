@@ -19,9 +19,14 @@
       ProxyPreserveHost On
       SSLEngine on
 
-      ProxyPass /api https://{{qcm_server}}:8001/ retry=1 acquire=3000 timeout=600 Keepalive=On
-      ProxyPassReverse /api  https://{{qcm_server}}:8001/
+      ProxyPass /api http://{{qcm_server}}:8000/api
+	  ProxyPassReverse /api http://{{qcm_server}}:8000/api
 
+	  ProxyPass /swagger-ui http://{{qcm_server}}:8000/swagger-ui
+	  ProxyPass /swagger-ui  http://{{qcm_server}}:8000/swagger-ui
+
+      ProxyPass /v3/api-docs http://{{qcm_server}}:8000/v3/api-docs
+	  ProxyPass /v3/api-docs  http://{{qcm_server}}:8000/v3/api-docs
 
       RequestHeader set X-Forwarded-Proto "https"
       RequestHeader set X-Forwarded-Port "443"
