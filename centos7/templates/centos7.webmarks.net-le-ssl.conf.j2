@@ -72,7 +72,8 @@
       ProxyPreserveHost On
       SSLEngine on
       SSLProxyEngine on
-      ProxyPass / https://{{keycloak_server}}:8443/ retry=1 acquire=3000 timeout=600 Keepalive=On
+      #ProxyPass / https://{{keycloak_server}}:8443/ retry=1 acquire=3000 timeout=600 Keepalive=On
+      ProxyPass / https://{{keycloak_server}}:8443/ retry=1 acquire=3000 timeout=600
       ProxyPassReverse / https://{{keycloak_server}}:8443/
       RequestHeader set X-Forwarded-Proto "https"
       RequestHeader set X-Forwarded-Port "443"

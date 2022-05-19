@@ -1,0 +1,70 @@
+
+---
+- name: Initialise qcm app with default  index site
+  hosts: 'all'
+  become: yes
+
+  vars_files:
+    - devops.yaml
+    - admin.yaml
+
+  vars:
+      scheme: "https"
+
+  pre_tasks:
+
+    - name: checking limit arg
+      fail:
+          msg: "you must use -l or --limit - when you really want to use all hosts, use -l 'all'"
+      when: ansible_limit is not defined
+      run_once: true
+
+  tasks:
+
+    - name: "Create  network {{ docker_network_name }} "
+      docker_network:
+        name: "{{ docker_network_name }}"
+        driver: bridge
+
+    - name: "Stop running {{ docker_container_app_name }} container"
+      docker_container:
+        name: "{{ item }}"
+        state: stopped
+      ignore_errors: yes
+      with_items:
+        - "{{ docker_container_app_name }}"
+
+    - name: "Remove {{ docker_container_app_name }} container"
+      docker_container:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ docker_container_app_name }}"
+      ignore_errors: yes
+
+    - name:  "Create and  app rest container {{docker_container_app_img}} --> {{docker_container_app_name}} "
+      docker_container:
+        hostname: "{{docker_container_app_name}}"
+        name: "{{docker_container_app_name}}"
+        image: "{{docker_container_app_img}}"
+        state: started
+        pull: true
+        restart: yes
+        restart_policy: unless-stopped
+        networks:
+          - name: "{{ docker_network_name }}"
+        ports:
+          - "{{ admin_port }}:{{ admin_port }}"
+        env:
+          ADMIN_USER: "{{docker_admin_user}}"
+          ADMIN_PASSWORD: "{{docker_admin_password}}"
+
+    - name: Get infos on container
+      docker_container_info:
+        name: "{{docker_container_app_name}}"
+      register: result
+
+    - name: Print information about container
+      debug:
+        var: result
+      when: result

@@ -12,11 +12,11 @@ qcm_version: latest
 
 qcm_port: 8000
 
-docker_network_name: qcm-network
-docker_container_db_name: qcm-db-srv
-docker_container_app_name: qcm-app-srv
-docker_container_app_img: ericmuller/qcm-rest-app:latest
-docker_volume_db_data: qcm-db-data
+docker_qcm_network_name: qcm-network
+docker_qcm_container_db_name: qcm-db-srv
+docker_qcm_container_app_name: qcm-app-srv
+docker_qcm_container_app_img: ericmuller/qcm-rest-app:latest
+docker_qcm_volume_db_data: qcm-db-data
 
 docker_db: qcm
 docker_db_port: 5432

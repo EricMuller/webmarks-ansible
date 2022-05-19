@@ -22,23 +22,23 @@
         state: stopped
       ignore_errors: yes
       with_items:
-        - "{{ docker_container_db_name }}"
-        - "{{ docker_container_app_name }}"
+        - "{{ docker_qcm_container_db_name }}"
+        - "{{ docker_qcm_container_app_name }}"
 
     - name: "Remove keycloak containers"
       docker_container:
         name: "{{ item }}"
         state: absent
       with_items:
-        - "{{ docker_container_db_name }}"
-        - "{{ docker_container_app_name }}"
+        - "{{ docker_qcm_container_db_name }}"
+        - "{{ docker_qcm_container_app_name }}"
 
     - name: "Remove keycloak network"
       docker_network:
-        name: "{{ docker_network_name }}"
+        name: "{{ docker_qcm_network_name }}"
         state: absent
 
     - name: "Remove keycloak volume"
       docker_volume:
-        name: "{{ docker_volume_db_data }}"
+        name: "{{ docker_qcm_volume_db_data }}"
         state: absent

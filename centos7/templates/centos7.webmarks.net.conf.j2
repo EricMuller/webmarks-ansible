@@ -30,6 +30,8 @@
   Header set Pragma "no-cache"
   Header set Expires "Wed, 12 Jan 1980 05:00:00 GMT"
 
+  RewriteCond %{SERVER_NAME} =qcm.webmarks.net
+  RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 </VirtualHost>
 
 

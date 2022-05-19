@@ -1,0 +1,14 @@
+---
+
+devops_apps_grafana_dir: "{{ devops_apps_dir }}/grafana"
+
+grafana_version: 8.4.6
+
+grafana_port: 3000
+
+#docker_graphana_container_db_name: "graphana-{{ grafana_version }}-db-srv"
+docker_grafana_container_app_name: "graphana-{{ grafana_version }}-srv"
+docker_grafana_volume_data: "{{ devops_apps_grafana_dir }}"
+docker_grafana_container_app_img: "grafana/grafana:{{ grafana_version }}"
+
+

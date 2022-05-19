@@ -1,0 +1,15 @@
+---
+
+admin_version: 2.5.4
+
+admin_port: 9080
+
+docker_network_name: admin-{{ admin_version }}-network
+docker_container_db_name: admin-{{ admin_version }}-db-srv
+docker_container_app_name: admin-{{ admin_version }}-srv
+docker_volume_db_data: admin-{{ admin_version }}-db-data
+
+docker_container_app_img: ericmuller/spring-boot-admin:latest
+
+docker_admin_user: admin
+docker_admin_password: admin

@@ -1,0 +1,15 @@
+---
+
+devops_apps_prometheus_dir: "{{ devops_apps_dir }}/prometheus"
+
+prometheus_version: v2.33.5
+
+prometheus_port: 9090
+
+#docker_promotheus_network_name: "promotheus-{{ promotheus_version }}-network"
+#docker_promotheus_container_db_name: "promotheus-{{ promotheus_version }}-db-srv"
+docker_prometheus_container_app_name: "prometheus-{{ prometheus_version }}-srv"
+docker_prometheus_volume_data: "{{ devops_apps_prometheus_dir }}"
+docker_prometheus_container_app_img: "prom/prometheus:{{ prometheus_version }}"
+
+

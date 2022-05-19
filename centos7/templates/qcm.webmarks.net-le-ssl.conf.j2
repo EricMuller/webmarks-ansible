@@ -19,14 +19,32 @@
       ProxyPreserveHost On
       SSLEngine on
 
+      #BOOT ADMIN
+      ProxyPass /admin http://{{qcm_server}}:9080/admin
+	  ProxyPassReverse /admin http://{{qcm_server}}:9080/admin
+
+      # API
       ProxyPass /api http://{{qcm_server}}:8000/api
 	  ProxyPassReverse /api http://{{qcm_server}}:8000/api
 
+      ProxyPass /actuator http://{{qcm_server}}:8000/actuator
+	  ProxyPassReverse /actuator http://{{qcm_server}}:8000/actuator
+
+      # OPEN API
 	  ProxyPass /swagger-ui http://{{qcm_server}}:8000/swagger-ui
 	  ProxyPass /swagger-ui  http://{{qcm_server}}:8000/swagger-ui
 
       ProxyPass /v3/api-docs http://{{qcm_server}}:8000/v3/api-docs
 	  ProxyPass /v3/api-docs  http://{{qcm_server}}:8000/v3/api-docs
+
+      # PROMOTEHUS
+      ProxyPass /prometheus http://{{qcm_server}}:9090/prometheus
+      ProxyPass /prometheus http://{{qcm_server}}:9090/prometheus
+
+      # GRAPHANA
+      # RewriteRule ^/grafana$ grafana/ [R]
+      ProxyPass /grafana http://{{qcm_server}}:3000/grafana
+      ProxyPassReverse /grafana http://{{qcm_server}}:3000/grafana
 
       RequestHeader set X-Forwarded-Proto "https"
       RequestHeader set X-Forwarded-Port "443"
@@ -36,6 +54,7 @@
       SSLCertificateKeyFile /etc/letsencrypt/live/{{centos7_server}}/privkey.pem
       Include /etc/letsencrypt/options-ssl-apache.conf
       SSLCertificateChainFile /etc/letsencrypt/live/{{centos7_server}}/chain.pem
+
 
   </VirtualHost>
 
